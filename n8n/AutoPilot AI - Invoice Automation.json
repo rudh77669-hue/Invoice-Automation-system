@@ -1,0 +1,373 @@
+{
+  "name": "AutoPilot AI - Invoice Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "autopilot-invoice",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        -112
+      ],
+      "id": "defdfb61-527f-486c-94cd-09b772ca744d",
+      "name": "Webhook",
+      "webhookId": "0b8ec78d-f927-4d20-9894-6f9aae67b3f8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2decc1ae-43a1-4903-8e9c-ad2fb9f2f66d",
+              "leftValue": "={{ $('Parse Invoice Data').item.json.body.decision.approval_required }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        -112
+      ],
+      "id": "d93964a8-e7b7-4218-989a-c6aaf8419bfc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resume": "form",
+        "formTitle": "Invoice Approval Required",
+        "formDescription": "=An invoice requires human approval before it can be processed.\n\nVendor: {{ $('Parse Invoice Data').item.json.body.invoice.vendor }}\n\nInvoice Number: {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }}\n\nInvoice Date: {{ $('Parse Invoice Data').item.json.body.invoice.invoice_date }}\n\nDue Date: {{ $('Parse Invoice Data').item.json.body.invoice.due_date }}\n\nSubtotal: ₹{{ $('Parse Invoice Data').item.json.body.invoice.subtotal }}\n\nTax: ₹{{ $('Parse Invoice Data').item.json.body.invoice.tax }}\n\nTotal: ₹{{ $('Parse Invoice Data').item.json.body.invoice.total }}\n\nCurrency: {{ $('Parse Invoice Data').item.json.body.invoice.currency }}\n\nRisk Level: {{ $('Parse Invoice Data').item.json.body.decision.risk_level }}\n\nReason: {{ $('Parse Invoice Data').item.json.body.decision.reason }}\n\nPlease review the invoice details and select Approve or Reject.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "=approval_status",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "APPROVED"
+                  },
+                  {
+                    "option": "REJECTED"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        -272
+      ],
+      "id": "fbcf86b8-b238-4511-8b4f-73ba421ec3e1",
+      "name": "Wait",
+      "webhookId": "cc8cd4df-16ca-4ad9-af3e-d7261e58e5e3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cc6ea36f-b8d1-4a1a-8c91-ebdf9ebf1f8d",
+              "leftValue": "={{ $json.approval_status }}",
+              "rightValue": "APPROVED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        -208
+      ],
+      "id": "80812679-1ce9-42a7-83c8-f96c2fbbdf98",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "anirsharma450@gmail.com",
+        "subject": "=Invoice {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }} - Approved",
+        "message": "=  <h2>Invoice Approval Notification</h2>\n  \n  <p>Hello Finance Team,</p>\n  \n  <p>\n  The following invoice has been reviewed and approved by the authorized reviewer.\n  </p>\n  \n  <h3>Invoice Details</h3>\n  \n  <table>\n  <tr>\n  <td><strong>Vendor</strong></td>\n  <td>{{ $('If').item.json.body.invoice.vendor }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Invoice Number</strong></td>\n  <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Invoice Date</strong></td>\n  <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_date }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Due Date</strong></td>\n  <td>{{ $('Parse Invoice Data').item.json.body.invoice.due_date }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Subtotal</strong></td>\n  <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.subtotal }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Tax</strong></td>\n  <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.tax }}</td>\n  </tr>\n  \n  <tr>\n  <td><strong>Total Amount</strong></td>\n  <td><strong>₹{{ $('Parse Invoice Data').item.json.body.invoice.total }}</strong></td>\n  </tr>\n  \n  <tr>\n  <td><strong>Currency</strong></td>\n  <td>{{ $('Parse Invoice Data').item.json.body.invoice.currency }}</td>\n  </tr>\n  </table>\n  \n  <h3>Approval Details</h3>\n  \n  <p>\n  <strong>Status:</strong> APPROVED<br>\n  <strong>Risk Level:</strong> {{ $('Parse Invoice Data').item.json.body.decision.risk_level }}<br>\n  <strong>Reason:</strong> {{ $('Parse Invoice Data').item.json.body.decision.reason }}\n  </p>\n  \n  <p>\n  The invoice has been approved and can proceed for further processing.\n  </p>\n  \n  <p>\n  Regards,<br>\n  <strong>AutoPilot AI</strong><br>\n  AI-Driven Invoice Automation System\n  </p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        -304
+      ],
+      "id": "434cbafe-67ed-45ce-a246-fa9377fbc7b5",
+      "name": "Send a message",
+      "webhookId": "29c1c9a0-1be2-4a82-a033-a74046c50ed9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ClFJYrs38I1Hkqfu",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "anirsharma450@gmail.com",
+        "subject": "=Invoice {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }} - Rejected",
+        "message": "=<h2>Invoice Rejection Notification</h2>  <p>Hello Finance Team,</p>  <p> The following invoice has been reviewed and rejected by the authorized reviewer. </p>  <h3>Invoice Details</h3>  <table> <tr> <td><strong>Vendor</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.vendor }}</td> </tr>  <tr> <td><strong>Invoice Number</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }}</td> </tr>  <tr> <td><strong>Invoice Date</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_date }}</td> </tr>  <tr> <td><strong>Due Date</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.due_date }}</td> </tr>  <tr> <td><strong>Subtotal</strong></td> <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.subtotal }}</td> </tr>  <tr> <td><strong>Tax</strong></td> <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.tax }}</td> </tr>  <tr> <td><strong>Total Amount</strong></td> <td><strong>₹{{ $('Parse Invoice Data').item.json.body.invoice.total }}</strong></td> </tr>  <tr> <td><strong>Currency</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.currency }}</td> </tr> </table>  <h3>Approval Details</h3>  <p> <strong>Status:</strong> REJECTED<br> <strong>Risk Level:</strong> {{ $('Parse Invoice Data').item.json.body.decision.risk_level }}<br> <strong>Reason:</strong> {{ $('Parse Invoice Data').item.json.body.decision.reason }} </p>  <p> The invoice has been rejected and will not proceed for further processing. </p>  <p> Regards,<br> <strong>AutoPilot AI</strong><br> AI-Driven Invoice Automation System </p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        -112
+      ],
+      "id": "3605a0e5-0ee2-47e5-abe4-390b86d210f9",
+      "name": "Send a message1",
+      "webhookId": "4b8bb44c-c7b9-4600-a9d9-f253c05a4073",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ClFJYrs38I1Hkqfu",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "anirsharma450@gmail.com",
+        "subject": "=Invoice {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }} - Automatically Approved",
+        "message": "=<h2>Invoice Automatically Approved</h2>  <p>Hello Finance Team,</p>  <p> The following invoice has been automatically approved by AutoPilot AI because it is below the human approval threshold. </p>  <h3>Invoice Details</h3>  <table> <tr> <td><strong>Vendor</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.vendor }}</td> </tr>  <tr> <td><strong>Invoice Number</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }}</td> </tr>  <tr> <td><strong>Invoice Date</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.invoice_date }}</td> </tr>  <tr> <td><strong>Due Date</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.due_date }}</td> </tr>  <tr> <td><strong>Subtotal</strong></td> <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.subtotal }}</td> </tr>  <tr> <td><strong>Tax</strong></td> <td>₹{{ $('Parse Invoice Data').item.json.body.invoice.tax }}</td> </tr>  <tr> <td><strong>Total Amount</strong></td> <td><strong>₹{{ $('Parse Invoice Data').item.json.body.invoice.total }}</strong></td> </tr>  <tr> <td><strong>Currency</strong></td> <td>{{ $('Parse Invoice Data').item.json.body.invoice.currency }}</td> </tr> </table>  <h3>Automation Decision</h3>  <p> <strong>Status:</strong> AUTO APPROVED<br> <strong>Risk Level:</strong> {{ $('Parse Invoice Data').item.json.body.decision.risk_level }}<br> <strong>Reason:</strong> {{ $('Parse Invoice Data').item.json.body.decision.reason }} </p>  <p> No human approval was required because the invoice amount is within the automatic processing limit. </p>  <p> Regards,<br> <strong>AutoPilot AI</strong><br> AI-Driven Invoice Automation System </p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        64
+      ],
+      "id": "90a2963f-5fd4-46d3-9608-abded721cb15",
+      "name": "Send a message2",
+      "webhookId": "fc1998e3-a747-4ea0-b8ba-2b66a546deb4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ClFJYrs38I1Hkqfu",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "rudh77669@gmail.com",
+        "subject": "=Invoice {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }} - Approval Required",
+        "message": "=<h2>Invoice Approval Required</h2>\n\n<p>Hello Finance Team,</p>\n\n<p>\n  An invoice requires human approval before it can be processed.\n</p>\n\n<p><strong>Vendor:</strong> {{ $('Parse Invoice Data').item.json.body.invoice.vendor }}</p>\n\n<p><strong>Invoice Number:</strong> {{ $('Parse Invoice Data').item.json.body.invoice.invoice_number }}</p>\n\n<p><strong>Total:</strong> ₹{{ $('Parse Invoice Data').item.json.body.invoice.total }}</p>\n\n<p><strong>Risk Level:</strong> {{ $('Parse Invoice Data').item.json.body.decision.risk_level }}</p>\n\n<p><strong>Reason:</strong> {{ $('Parse Invoice Data').item.json.body.decision.reason }}</p>\n\n<hr>\n\n<h3>Human Approval</h3>\n\n<p>\n  Click the link below to review and approve or reject the invoice:\n</p>\n\n<p>\n  <a href=\"{{ $execution.resumeFormUrl }}\">\n    Open Invoice Approval Form\n  </a>\n</p>\n\n<p>\n  Regards,<br>\n  <strong>AutoPilot AI</strong><br>\n  AI-Driven Invoice Automation System\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        -320
+      ],
+      "id": "6e1e4b30-ea62-4390-823a-a472ac8dffcc",
+      "name": "Send a message3",
+      "webhookId": "24dbd384-b6f8-40e0-806f-a4713af0704c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ClFJYrs38I1Hkqfu",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const invoice = JSON.parse($json.body.invoice);\nconst decision = JSON.parse($json.body.decision);\n\nreturn {\n  json: {\n    ...$json,\n    body: {\n      ...$json.body,\n      invoice: invoice,\n      decision: decision\n    }\n  },\n  binary: $binary\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "fdf9229c-d093-4e25-bd3f-47ef4000ad1c",
+      "name": "Parse Invoice Data"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=invoice_pdf",
+        "name": "={{ $binary.invoice_pdf.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1LQJfcZCULE4eEOVpkmEsyT9aRRMJx0Zd",
+          "mode": "list",
+          "cachedResultName": "invoice data",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1LQJfcZCULE4eEOVpkmEsyT9aRRMJx0Zd"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        336,
+        -336
+      ],
+      "id": "032e5989-28d5-4187-9da6-213f1fdb13bd",
+      "name": "Upload file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "y3jSyu4KQAMAju9z",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Invoice Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Invoice Data": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "71ded55c-bb7c-48d5-9e4f-b01a6ec52fdd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "947fe94c0437d32e5ae7d8278a684857b4a25e1026e2340258022fb37dcfec9f"
+  },
+  "nodeGroups": [],
+  "id": "9d2DYKmfMSPQlP3k",
+  "tags": []
+}

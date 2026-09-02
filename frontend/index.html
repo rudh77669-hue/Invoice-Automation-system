@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoPilot AI | Invoice Automation</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            <span class="logo-icon">✦</span>
+            <span>AutoPilot AI</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html" class="active">Invoice</a>
+            <a href="pages/dashboard.html">Dashboard</a>
+            <a href="pages/workflows.html">Workflows</a>
+            <a href="pages/approvals.html">Approvals</a>
+            <a href="pages/logs.html">Logs</a>
+            <a href="pages/analytics.html">Analytics</a>
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main-container">
+
+        <section class="hero">
+
+            <div class="badge">
+                AI-POWERED AUTOMATION
+            </div>
+
+            <h1>
+                Automate Your
+                <span>Invoice Processing</span>
+            </h1>
+
+            <p class="hero-description">
+                Upload an invoice and let AutoPilot AI extract,
+                analyze, validate and process it automatically.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             UPLOAD CARD
+        ========================== -->
+
+        <section class="upload-section">
+
+            <div class="upload-card">
+
+                <div class="upload-icon">
+                    📄
+                </div>
+
+                <h2>Upload Invoice</h2>
+
+                <p>
+                    Upload your invoice PDF to begin AI analysis.
+                </p>
+
+                <input
+                    type="file"
+                    id="invoiceFile"
+                    accept=".pdf"
+                    hidden
+                >
+
+                <button
+                    class="upload-button"
+                    id="chooseFileButton"
+                >
+                    Choose Invoice
+                </button>
+
+                <div
+                    class="selected-file"
+                    id="selectedFile"
+                >
+                </div>
+
+                <button
+                    class="analyze-button"
+                    id="analyzeButton"
+                    disabled
+                >
+                    Analyze Invoice
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+
+        <section
+            class="loading-section hidden"
+            id="loadingSection"
+        >
+
+            <div class="loader"></div>
+
+            <h3>AI is analyzing your invoice...</h3>
+
+            <p>
+                Extracting invoice information and evaluating risk.
+            </p>
+
+        </section>
+
+        <!-- =========================
+        SUBMISSION SUCCESS
+        ========================== -->
+
+        <section
+            class="success-section hidden"
+            id="successSection">
+        
+            <div class="success-card">
+        
+                <div class="success-icon">
+                    ✓
+                </div>
+        
+                <div class="badge">
+                    SUBMISSION SUCCESSFUL
+                </div>
+        
+                <h2>Invoice Submitted Successfully</h2>
+        
+                <p>
+                    Your invoice has been received successfully.
+                    AI processing and automation will continue in the background.
+                </p>
+        
+                <div class="success-info">
+        
+                    <div>
+                        <span>Status</span>
+                        <strong>SUBMITTED</strong>
+                    </div>
+        
+                    <div>
+                        <span>Next Step</span>
+                        <strong>AI Processing</strong>
+                    </div>
+        
+                </div>
+        
+            </div>
+        
+        </section>
+
+        <!-- =========================
+             RESULT
+        ========================== -->
+
+        <section
+            class="result-section hidden"
+            id="resultSection"
+        >
+
+            <div class="result-header">
+
+                <div>
+                    <div class="badge">
+                        AI ANALYSIS COMPLETE
+                    </div>
+
+                    <h2>Invoice Analysis</h2>
+                </div>
+
+                <div
+                    class="status-badge"
+                    id="statusBadge"
+                >
+                    PENDING
+                </div>
+
+            </div>
+
+
+            <!-- Invoice details -->
+
+            <div class="invoice-details">
+
+                <div class="detail">
+                    <span>Vendor</span>
+                    <strong id="vendor">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Invoice Number</span>
+                    <strong id="invoiceNumber">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Invoice Date</span>
+                    <strong id="invoiceDate">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Due Date</span>
+                    <strong id="dueDate">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Subtotal</span>
+                    <strong id="subtotal">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Tax</span>
+                    <strong id="tax">-</strong>
+                </div>
+
+                <div class="detail total">
+                    <span>Total Amount</span>
+                    <strong id="total">-</strong>
+                </div>
+
+                <div class="detail">
+                    <span>Currency</span>
+                    <strong id="currency">-</strong>
+                </div>
+
+            </div>
+
+
+            <!-- Decision -->
+
+            <div class="decision-card">
+
+                <h3>AI Decision</h3>
+
+                <div
+                    class="risk-level"
+                    id="riskLevel"
+                >
+                    HIGH RISK
+                </div>
+
+                <p id="decisionText">
+                    Human approval required.
+                </p>
+
+                <div class="reason">
+
+                    <strong>Reason</strong>
+
+                    <p id="decisionReason">
+                        -
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Workflow -->
+
+            <div class="workflow-status">
+
+                <h3>Automation Workflow</h3>
+
+                <div class="workflow">
+
+                    <div class="workflow-step completed">
+                        <div>✓</div>
+                        <span>Invoice Uploaded</span>
+                    </div>
+
+                    <div class="workflow-line"></div>
+
+                    <div class="workflow-step completed">
+                        <div>✓</div>
+                        <span>AI Analysis</span>
+                    </div>
+
+                    <div class="workflow-line"></div>
+
+                    <div
+                        class="workflow-step"
+                        id="approvalStep"
+                    >
+                        <div>3</div>
+                        <span>Approval</span>
+                    </div>
+
+                    <div class="workflow-line"></div>
+
+                    <div class="workflow-step">
+                        <div>4</div>
+                        <span>Email</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            AutoPilot AI © 2026
+        </p>
+
+        <p>
+            From intention to execution — automatically.
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Secrets
+.env
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Uploaded/generated files
+backend/temp_invoices/*
+documents/invoices/*
