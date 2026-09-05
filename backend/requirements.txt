@@ -1,4 +1,12 @@
-fastapi
-uvicorn[standard]
+Flask
+flask-cors
+gunicorn
 python-dotenv
-python-multipart
+requests
+
+langchain
+langchain-core
+langchain-community
+langchain-mistralai
+
+pypdf
