@@ -409,7 +409,8 @@ analyzeButton.addEventListener("click", async () => {
         ------------------------- */
 
         const response = await fetch(
-            "http://127.0.0.1:5000/api/invoice/analyze",
+            // "http://127.0.0.1:5000/api/invoice/analyze",
+            "https://invoice-automation-system-vgrs.onrender.com/api/invoice/analyze",
             {
                 method: "POST",
                 body: formData
